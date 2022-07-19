@@ -11,8 +11,8 @@ import (
 	"github.com/ethereum/go-ethereum/core"
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/params"
+	evmtypes "github.com/evmos/ethermint/x/evm/types"
 	"github.com/stretchr/testify/require"
-	evmtypes "github.com/tharsis/ethermint/x/evm/types"
 )
 
 var templateAccessListTx = &ethtypes.AccessListTx{
@@ -143,7 +143,7 @@ func newNativeMessage(
 
 func BenchmarkApplyTransaction(b *testing.B) {
 	suite := KeeperTestSuite{enableLondonHF: true}
-	suite.DoSetupTest(b)
+	suite.SetupTest()
 
 	ethSigner := ethtypes.LatestSignerForChainID(suite.app.EvmKeeper.ChainID())
 
@@ -170,7 +170,7 @@ func BenchmarkApplyTransaction(b *testing.B) {
 
 func BenchmarkApplyTransactionWithLegacyTx(b *testing.B) {
 	suite := KeeperTestSuite{enableLondonHF: true}
-	suite.DoSetupTest(b)
+	suite.SetupTest()
 
 	ethSigner := ethtypes.LatestSignerForChainID(suite.app.EvmKeeper.ChainID())
 
@@ -197,7 +197,7 @@ func BenchmarkApplyTransactionWithLegacyTx(b *testing.B) {
 
 func BenchmarkApplyTransactionWithDynamicFeeTx(b *testing.B) {
 	suite := KeeperTestSuite{enableFeemarket: true, enableLondonHF: true}
-	suite.DoSetupTest(b)
+	suite.SetupTest()
 
 	ethSigner := ethtypes.LatestSignerForChainID(suite.app.EvmKeeper.ChainID())
 
@@ -224,7 +224,7 @@ func BenchmarkApplyTransactionWithDynamicFeeTx(b *testing.B) {
 
 func BenchmarkApplyMessage(b *testing.B) {
 	suite := KeeperTestSuite{enableLondonHF: true}
-	suite.DoSetupTest(b)
+	suite.SetupTest()
 
 	params := suite.app.EvmKeeper.GetParams(suite.ctx)
 	ethCfg := params.ChainConfig.EthereumConfig(suite.app.EvmKeeper.ChainID())
@@ -259,7 +259,7 @@ func BenchmarkApplyMessage(b *testing.B) {
 
 func BenchmarkApplyMessageWithLegacyTx(b *testing.B) {
 	suite := KeeperTestSuite{enableLondonHF: true}
-	suite.DoSetupTest(b)
+	suite.SetupTest()
 
 	params := suite.app.EvmKeeper.GetParams(suite.ctx)
 	ethCfg := params.ChainConfig.EthereumConfig(suite.app.EvmKeeper.ChainID())
@@ -294,7 +294,7 @@ func BenchmarkApplyMessageWithLegacyTx(b *testing.B) {
 
 func BenchmarkApplyMessageWithDynamicFeeTx(b *testing.B) {
 	suite := KeeperTestSuite{enableFeemarket: true, enableLondonHF: true}
-	suite.DoSetupTest(b)
+	suite.SetupTest()
 
 	params := suite.app.EvmKeeper.GetParams(suite.ctx)
 	ethCfg := params.ChainConfig.EthereumConfig(suite.app.EvmKeeper.ChainID())

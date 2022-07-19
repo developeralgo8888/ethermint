@@ -11,13 +11,13 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
-	ethermint "github.com/tharsis/ethermint/types"
-	"github.com/tharsis/ethermint/x/evm/types"
+	ethermint "github.com/evmos/ethermint/types"
+	"github.com/evmos/ethermint/x/evm/types"
 )
 
 func SetupContract(b *testing.B) (*KeeperTestSuite, common.Address) {
 	suite := KeeperTestSuite{}
-	suite.DoSetupTest(b)
+	suite.SetupTest()
 
 	amt := sdk.Coins{ethermint.NewPhotonCoinInt64(1000000000000000000)}
 	err := suite.app.BankKeeper.MintCoins(suite.ctx, types.ModuleName, amt)
@@ -33,7 +33,7 @@ func SetupContract(b *testing.B) (*KeeperTestSuite, common.Address) {
 
 func SetupTestMessageCall(b *testing.B) (*KeeperTestSuite, common.Address) {
 	suite := KeeperTestSuite{}
-	suite.DoSetupTest(b)
+	suite.SetupTest()
 
 	amt := sdk.Coins{ethermint.NewPhotonCoinInt64(1000000000000000000)}
 	err := suite.app.BankKeeper.MintCoins(suite.ctx, types.ModuleName, amt)

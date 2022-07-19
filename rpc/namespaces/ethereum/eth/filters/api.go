@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/tharsis/ethermint/rpc/types"
+	"github.com/evmos/ethermint/rpc/types"
 
 	"github.com/tendermint/tendermint/libs/log"
 
@@ -20,7 +20,7 @@ import (
 	"github.com/ethereum/go-ethereum/eth/filters"
 	"github.com/ethereum/go-ethereum/rpc"
 
-	evmtypes "github.com/tharsis/ethermint/x/evm/types"
+	evmtypes "github.com/evmos/ethermint/x/evm/types"
 )
 
 // Backend defines the methods requided by the PublicFilterAPI backend
@@ -28,9 +28,11 @@ type Backend interface {
 	GetBlockByNumber(blockNum types.BlockNumber, fullTx bool) (map[string]interface{}, error)
 	HeaderByNumber(blockNum types.BlockNumber) (*ethtypes.Header, error)
 	HeaderByHash(blockHash common.Hash) (*ethtypes.Header, error)
+	GetTendermintBlockByHash(hash common.Hash) (*coretypes.ResultBlock, error)
+	GetTendermintBlockResultByNumber(height *int64) (*coretypes.ResultBlockResults, error)
 	GetLogs(blockHash common.Hash) ([][]*ethtypes.Log, error)
-	GetLogsByNumber(blockNum types.BlockNumber) ([][]*ethtypes.Log, error)
-	BlockBloom(height *int64) (ethtypes.Bloom, error)
+	GetLogsByHeight(*int64) ([][]*ethtypes.Log, error)
+	BlockBloom(blockRes *coretypes.ResultBlockResults) (ethtypes.Bloom, error)
 
 	BloomStatus() (uint64, uint64)
 
@@ -155,7 +157,7 @@ func (api *PublicFilterAPI) NewPendingTransactionFilter() rpc.ID {
 					for _, msg := range tx.GetMsgs() {
 						ethTx, ok := msg.(*evmtypes.MsgEthereumTx)
 						if ok {
-							f.hashes = append(f.hashes, common.HexToHash(ethTx.Hash))
+							f.hashes = append(f.hashes, ethTx.AsTransaction().Hash())
 						}
 					}
 				}
@@ -219,7 +221,7 @@ func (api *PublicFilterAPI) NewPendingTransactions(ctx context.Context) (*rpc.Su
 				for _, msg := range tx.GetMsgs() {
 					ethTx, ok := msg.(*evmtypes.MsgEthereumTx)
 					if ok {
-						_ = notifier.Notify(rpcSub.ID, common.HexToHash(ethTx.Hash))
+						_ = notifier.Notify(rpcSub.ID, ethTx.AsTransaction().Hash())
 					}
 				}
 			case <-rpcSub.Err():
